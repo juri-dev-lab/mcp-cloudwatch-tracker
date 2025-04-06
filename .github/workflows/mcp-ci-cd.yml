@@ -106,7 +106,7 @@ jobs:
       - name: Create npmrc file
         run: |
           cat > .npmrc << EOF
-          @juri-dev-lab:registry=https://npm.pkg.github.com/
+          @Juri-Dev-Lab:registry=https://npm.pkg.github.com/
           //npm.pkg.github.com/:_authToken=${{ secrets.JURI_PACKAGES_TOKEN }}
           EOF
           cat .npmrc | sed 's/_authToken=.*/_authToken=***/'
