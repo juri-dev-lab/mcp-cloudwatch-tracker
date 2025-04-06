@@ -1,0 +1,57 @@
+{
+  "name": "cloudwatch-log-tracker",
+  "version": "1.0.0",
+  "description": "AWS CloudWatch log analysis and debugging tool using MCP server",
+  "main": "dist/index.js",
+  "bin": {
+    "cloudwatch-log-tracker": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "dev": "ts-node src/cli.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint 'src/**/*.{js,ts}'",
+    "lint:fix": "eslint 'src/**/*.{js,ts}' --fix",
+    "format": "prettier --write 'src/**/*.{js,ts}'",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "docker:build": "docker build -t cloudwatch-log-tracker .",
+    "docker:run": "docker run cloudwatch-log-tracker"
+  },
+  "keywords": [
+    "aws",
+    "cloudwatch",
+    "logs",
+    "debugging",
+    "mcp",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.x",
+    "@modelcontextprotocol/sdk": "^1.8.0",
+    "commander": "^11.x",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.x",
+    "@types/node": "^20.x",
+    "@typescript-eslint/eslint-plugin": "^6.x",
+    "@typescript-eslint/parser": "^6.x",
+    "eslint": "^8.x",
+    "jest": "^29.x",
+    "prettier": "^3.x",
+    "ts-jest": "^29.x",
+    "typescript": "^5.x"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
