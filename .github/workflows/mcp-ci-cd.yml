@@ -54,31 +54,28 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
           scope: "@Juri-Dev-Lab"
 
-      - name: Check npm configuration
-        run: |
-          echo "NPM registry configuration:"
-          npm config list
-          echo "Creating .npmrc with token"
-          echo "@Juri-Dev-Lab:registry=https://npm.pkg.github.com/" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.JURI_PACKAGES_TOKEN }}" >> .npmrc
-          echo "Current directory content:"
-          ls -la
-
-      - name: Bump patch version
-        run: npm version patch --no-git-tag-version
-        # 또는 minor나 major 버전을 올리려면:
-        # run: npm version minor --no-git-tag-version
-
       - name: Install dependencies
         run: npm ci
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.JURI_PACKAGES_TOKEN }} #repo, package:read, package:write
+          NODE_AUTH_TOKEN: ${{ secrets.JURI_PACKAGES_TOKEN }}
+
+      - name: 고유 버전 생성
+        id: generate_version
+        run: |
+          # 기본 버전 가져오기 (예: 1.0)
+          BASE_VERSION=$(node -p "require('./package.json').version.split('.').slice(0, 2).join('.')")
+          # GitHub 실행 번호와 타임스탬프를 사용하여 고유 버전 생성
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          UNIQUE_VERSION="${BASE_VERSION}.${{ github.run_number }}-${TIMESTAMP}"
+          echo "Generated version: ${UNIQUE_VERSION}"
+          echo "version=${UNIQUE_VERSION}" >> $GITHUB_OUTPUT
+          npm version --no-git-tag-version "${UNIQUE_VERSION}"
 
       - name: Build package
         run: npm run build
 
       - name: Publish to GitHub Packages
-        run: npm publish --verbose
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.JURI_PACKAGES_TOKEN }} #repo, package:read, package:write
 
@@ -89,6 +86,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@Juri-Dev-Lab"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -98,20 +102,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 안전한 .npmrc 생성 (임시 파일)
-      - name: Create .npmrc file
+      # 임시 런타임 디렉토리에 토큰 파일 생성
+      - name: Create npmrc file
         run: |
-          echo "@Juri-Dev-Lab:registry=https://npm.pkg.github.com/" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.JURI_PACKAGES_TOKEN }}" >> .npmrc
-        # 이 파일은 GitHub Action runner에만 생성되고 이미지에 포함되지 않음
+          cat > .npmrc << EOF
+          @juri-dev-lab:registry=https://npm.pkg.github.com/
+          //npm.pkg.github.com/:_authToken=${{ secrets.JURI_PACKAGES_TOKEN }}
+          EOF
+          cat .npmrc | sed 's/_authToken=.*/_authToken=***/'
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          secrets: |
-            npmrc=.npmrc
           tags: |
             devthorjuri/mcp-cloudwatch-tracker:latest
             devthorjuri/mcp-cloudwatch-tracker:${{ github.sha }}
+          secret-files: |
+            "npmrc=.npmrc"

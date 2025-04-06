@@ -1,5 +1,5 @@
 {
-  "name": "@Juri-Dev-Lab/mcp-cloudwatch-tracker",
+  "name": "@juri-dev-lab/mcp-cloudwatch-tracker",
   "version": "1.0.0",
   "description": "AWS CloudWatch log analysis and debugging tool using MCP server",
   "publishConfig": {
