@@ -29,8 +29,9 @@
     "format": "prettier --write 'src/**/*.{js,ts}'",
     "prepare": "npm run build",
     "prepublishOnly": "npm test",
-    "docker:build": "docker build -t cloudwatch-log-tracker .",
-    "docker:run": "docker run cloudwatch-log-tracker"
+    "docker:build": "docker build -t juridevlab/mcp-cloudwatch-tracker .",
+    "docker:push": "docker push juridevlab/mcp-cloudwatch-tracker",
+    "docker:run": "docker run --rm -i juridevlab/mcp-cloudwatch-tracker"
   },
   "keywords": [
     "aws",

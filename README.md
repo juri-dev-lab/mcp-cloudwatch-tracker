@@ -13,8 +13,6 @@ AWS CloudWatch 로그를 분석하고 디버깅하기 위한 MCP(Model Context P
 
 ### NPX를 통한 실행
 
-1. 직접 실행
-
 ```bash
 npx -y @juri-dev-lab/mcp-cloudwatch-tracker@latest \
   --aws-access-key-id YOUR_AWS_ACCESS_KEY \
@@ -22,75 +20,18 @@ npx -y @juri-dev-lab/mcp-cloudwatch-tracker@latest \
   --aws-region YOUR_AWS_REGION
 ```
 
-2. MCP 설정 파일 사용 (mcp.json)
-
-```json
-{
-  "mcpServers": {
-    "cloudwatch-log-tracker": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@juri-dev-lab/mcp-cloudwatch-tracker@latest",
-        "run",
-        "--aws-access-key-id",
-        "YOUR_AWS_ACCESS_KEY",
-        "--aws-secret-access-key",
-        "YOUR_AWS_SECRET_KEY",
-        "--aws-region",
-        "YOUR_AWS_REGION"
-      ]
-    }
-  }
-}
-```
-
 ### Docker를 통한 실행
 
-1. Docker 직접 실행
-
 ```bash
+# Docker Hub에서 이미지 가져오기
+docker pull juridevlab/mcp-cloudwatch-tracker
+
+# 환경 변수와 함께 실행
 docker run --rm -i \
   -e AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY \
   -e AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_KEY \
   -e AWS_REGION=YOUR_AWS_REGION \
-  juri-dev-lab/mcp-cloudwatch-tracker
-```
-
-2. MCP 설정 파일 사용 (mcp.json)
-
-```json
-{
-  "mcpServers": {
-    "cloudwatch-log-tracker": {
-      "command": "docker",
-      "args": [
-        "run",
-        "--rm",
-        "-i",
-        "-e",
-        "AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY",
-        "-e",
-        "AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_KEY",
-        "-e",
-        "AWS_REGION=YOUR_AWS_REGION",
-        "juri-dev-lab/mcp-cloudwatch-tracker"
-      ]
-    }
-  }
-}
-```
-
-3. 환경 변수 파일 사용
-
-```bash
-# .env 파일 생성
-AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY
-AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_KEY
-AWS_REGION=YOUR_AWS_REGION
-
-# Docker 실행 (환경 변수 파일 사용)
-docker run --rm -i --env-file .env juri-dev-lab/mcp-cloudwatch-tracker
+  juridevlab/mcp-cloudwatch-tracker
 ```
 
 ## AWS 자격 증명 설정
@@ -198,10 +139,14 @@ npm install
 npm run dev
 ```
 
-4. 빌드
+4. Docker 이미지 빌드 및 실행
 
 ```bash
-npm run build
+# 이미지 빌드
+npm run docker:build
+
+# 이미지 실행
+npm run docker:run
 ```
 
 ## 테스트
