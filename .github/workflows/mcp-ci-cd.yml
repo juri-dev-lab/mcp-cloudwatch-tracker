@@ -74,8 +74,18 @@ jobs:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@juri-dev-lab"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -96,3 +106,5 @@ jobs:
           tags: |
             devthorjuri/mcp-cloudwatch-tracker:latest
             devthorjuri/mcp-cloudwatch-tracker:${{ github.sha }}
+          secrets: |
+            NODE_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
