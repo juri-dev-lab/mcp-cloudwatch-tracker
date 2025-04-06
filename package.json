@@ -2,9 +2,9 @@
   "name": "@juri-dev-lab/mcp-cloudwatch-tracker",
   "version": "1.0.0",
   "description": "AWS CloudWatch log analysis and debugging tool using MCP server",
-  "private": true,
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
   },
   "repository": {
     "type": "git",
