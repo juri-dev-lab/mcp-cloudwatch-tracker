@@ -6,10 +6,9 @@ WORKDIR /app
 # 패키지 파일 복사
 COPY package*.json ./
 
-# GitHub Packages 인증 설정 및 의존성 설치
-RUN --mount=type=secret,id=npmrc,dst=.npmrc \
-    npm ci && \
-    rm -f .npmrc
+# GitHub Packages 인증 설정 및 의존성 설치 (보안 강화)
+RUN --mount=type=secret,id=npmrc,target=/app/.npmrc,required=true \
+    npm ci
 
 # 소스 코드 복사 및 빌드
 COPY . .
@@ -24,10 +23,9 @@ WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
 
-# 프로덕션 의존성만 설치
-RUN --mount=type=secret,id=npmrc,dst=.npmrc \
+# 프로덕션 의존성만 설치 (보안 강화)
+RUN --mount=type=secret,id=npmrc,target=/app/.npmrc,required=true \
     npm ci --only=production && \
-    rm -f .npmrc && \
     npm cache clean --force
 
 # 실행 권한 설정
