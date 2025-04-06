@@ -54,6 +54,16 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
           scope: "@Juri-Dev-Lab"
 
+      - name: Check npm configuration
+        run: |
+          echo "NPM registry configuration:"
+          npm config list
+          echo "Creating .npmrc with token"
+          echo "@Juri-Dev-Lab:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.JURI_PACKAGES_TOKEN }}" >> .npmrc
+          echo "Current directory content:"
+          ls -la
+
       - name: Install dependencies
         run: npm ci
         env:
@@ -63,7 +73,7 @@ jobs:
         run: npm run build
 
       - name: Publish to GitHub Packages
-        run: npm publish
+        run: npm publish --verbose
         env:
           NODE_AUTH_TOKEN: ${{ secrets.JURI_PACKAGES_TOKEN }} #repo, package:read, package:write
 
