@@ -64,6 +64,11 @@ jobs:
           echo "Current directory content:"
           ls -la
 
+      - name: Bump patch version
+        run: npm version patch --no-git-tag-version
+        # 또는 minor나 major 버전을 올리려면:
+        # run: npm version minor --no-git-tag-version
+
       - name: Install dependencies
         run: npm ci
         env:
