@@ -111,10 +111,13 @@ jobs:
       - name: Create npmrc file
         run: |
           mkdir -p /tmp/secrets
+          echo "Creating .npmrc file..."
           cat > /tmp/secrets/npmrc << EOF
           @juri-dev-lab:registry=https://npm.pkg.github.com/
           //npm.pkg.github.com/:_authToken=${{ secrets.JURI_PACKAGES_TOKEN }}
           EOF
+          echo "Verifying .npmrc file contents:"
+          cat /tmp/secrets/npmrc
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
