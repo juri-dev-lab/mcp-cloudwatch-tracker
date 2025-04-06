@@ -2,13 +2,13 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [develop, main]
+    branches: [main]
   pull_request:
-    branches: [develop, main]
+    branches: [main]
 
 env:
-  ECR_REPOSITORY: cloudwatch-log-tracker
-  IMAGE_TAG: ${{ github.ref == 'refs/heads/main' && 'live' || 'dev' }}
+  ECR_REPOSITORY: dev-labs/mcp-server
+  IMAGE_TAG: cloudwatch-tracker
 
 jobs:
   build-and-test:
@@ -38,17 +38,12 @@ jobs:
         run: npm run build
 
       - name: Create .env file
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "${{ secrets.ENV_LIVE }}" > .env
-          else
-            echo "${{ secrets.ENV_DEV }}" > .env
-          fi
+        run: echo "${{ secrets.ENV_LIVE }}" > .env
 
   publish-npm:
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
 
@@ -75,15 +70,14 @@ jobs:
   publish-docker:
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::505342112136:role/GitHubActions-ECR-OIDC
           aws-region: ap-northeast-2
 
       - name: Login to Amazon ECR
@@ -94,5 +88,5 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

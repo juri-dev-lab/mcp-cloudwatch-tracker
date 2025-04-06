@@ -12,7 +12,7 @@ const envSchema = z.object({
   AWS_SECRET_ACCESS_KEY: z.string(),
 
   // 애플리케이션 설정
-  NODE_ENV: z.enum(['development', 'production']).default('development'),
+  NODE_ENV: z.enum(['development', 'production']).default('production'),
 
   // 로그 설정
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),

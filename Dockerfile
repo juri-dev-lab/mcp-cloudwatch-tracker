@@ -24,7 +24,5 @@ COPY --from=builder /app/node_modules ./node_modules
 # 실행 권한 설정
 RUN chmod +x ./dist/cli.js
 
-# 환경 변수 설정
-ENV NODE_ENV=production
 
 ENTRYPOINT ["node", "./dist/cli.js"] 
