@@ -89,5 +89,5 @@ jobs:
           context: .
           push: true
           tags: |
-            juridevlab/mcp-cloudwatch-tracker:latest
-            juridevlab/mcp-cloudwatch-tracker:${{ github.sha }}
+            devthorjuri/mcp-cloudwatch-tracker:latest
+            devthorjuri/mcp-cloudwatch-tracker:${{ github.sha }}
