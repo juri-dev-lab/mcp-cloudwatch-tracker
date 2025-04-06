@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Juri-Dev-Lab/mcp-cloudwatch-tracker.git"
+    "url": "git+https://github.com/juri-dev-lab/mcp-cloudwatch-tracker.git"
   },
   "main": "dist/index.js",
   "bin": {

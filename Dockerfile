@@ -6,13 +6,9 @@ WORKDIR /app
 # 패키지 파일 복사
 COPY package*.json ./
 
-# 인증 설정 및 의존성 설치 (디버깅 추가)
+# 인증 설정 및 의존성 설치
 RUN --mount=type=secret,id=npmrc,target=/app/.npmrc \
-    echo "--- .npmrc 파일 확인 ---" && \
-    ls -la && \
-    echo "--- 의존성 설치 시작 ---" && \
-    npm ci && \
-    echo "--- 의존성 설치 완료 ---"
+    npm ci
 
 # 소스 코드 복사 및 빌드
 COPY . .
